@@ -5,6 +5,7 @@ namespace razout\bxrequestqueue;
 use Bitrix\Highloadblock\HighloadBlockTable;
 use Bitrix\Main\Loader;
 use Bitrix\Highloadblock as HL;
+use Bitrix\Main\Type\DateTime;
 
 
 class RequestQueue
@@ -52,13 +53,15 @@ class RequestQueue
             "UF_STATUS" => false,
             "UF_REQUEST_NAME" => $request_name,
             "UF_CALLBACK" => $callback,
-            "UF_CALLBACK_PARAMS" => $call_back_params
+            "UF_CALLBACK_PARAMS" => $call_back_params,
+            "UF_TIME" => new DateTime()
         );
         $class = $this->entityClass;
         $res = $class::add($fields);
         if ($new_id = $res->getId()) {
             return array('result' => true, 'request_id' => $new_id);
         } else {
+            var_dump($res->getErrorMessages());
             return array('result' => false);
         }
     }
@@ -179,5 +182,40 @@ class RequestQueue
             throw new Exception('Highload block not found');
         }
         return $hlblock['ID'];
+    }
+
+    public static function clearTable(){
+        $queue = new RequestQueue();
+        $queue->cleareHLTable();
+        return "RequestQueue::clearTable();";
+    }
+
+    private function cleareHLTable(){
+        Loader::includeModule('highloadblock');
+
+        self::$HB_ID = $this->getHLTableIdByName(self::$HB_NAME);
+
+        $hlblock = HL\HighloadBlockTable::getById(self::$HB_ID)->fetch();
+        $this->entity = HL\HighloadBlockTable::compileEntity($hlblock); //генерация класса
+        $this->entityClass = $this->entity->getDataClass();
+
+        $now = json_decode(file_get_contents(__DIR__.self::$NOW_REQUESTS_PATH));
+        $class = $this->entityClass;
+        $result = $class::getList(
+            array(
+                "filter" => array(
+                    "UF_STATUS" => false,
+                    "!ID" => $now,
+                    ">UF_TIME" => ConvertTimeStamp(strtotime(date('Y-m-d H:i:s', time()-86400)), 'FULL')
+                ),
+                "order" => array(
+                    "ID" => "ASC"
+                ),
+            )
+        );
+
+        while ($ob = $result->fetch()){
+            $class::delete($ob['ID']);
+        }
     }
 }
