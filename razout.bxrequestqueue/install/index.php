@@ -50,6 +50,17 @@ class razout_bxrequestqueue extends CModule
     {
         //todo create highload table and agent
         $this->createHLTable();
+
+        $nextDay = time() + 86400;
+        CAgent::AddAgent(
+            "RequestQueue::clearTable();",
+            "razout.bxrequestqueue",
+            "Y",
+            86400,
+            "",
+            "Y",
+            ConvertTimeStamp(strtotime(date('Y-m-d 05:00:00', $nextDay)), 'FULL')
+        );
     }
 
     /**
@@ -61,6 +72,8 @@ class razout_bxrequestqueue extends CModule
     {
         //todo remove highload table and agent
         $this->deleteHLTable();
+
+        CAgent::RemoveModuleAgents("razout.bxrequestqueue");
     }
 
     /**
@@ -132,21 +145,10 @@ class razout_bxrequestqueue extends CModule
 
         $userTypeEntity = new CUserTypeEntity();
 
-        $typeArrs = array("REQUEST", "STATUS", "REQUEST_NAME", "CALLBACK", "CALLBACK_PARAMS", "RESULT");
-
-        foreach ($typeArrs as $typeArr) {
-            $userTypeData = array(
-                "ENTITY_ID" => "HLBLOCK_" . $highLoadBlockId,
-                "FIELD_NAME" => "UF_" . $typeArr,
-                "USER_TYPE_ID" => "string",
-                "XML_ID" => "XML_ID_" . $typeArr,
-                "SORT" => 100,
-                "MULTIPLE" => "N",
-                "MANDATORY" => "N",
-                "SHOW_FILTER" => "N",
-                "SHOW_IN_LIST" => "",
-                "EDIT_IN_LIST" => "",
-                "IS_SEARCHABLE" => "N",
+        $typeArrs = array(
+            array(
+                "NAME" => "REQUEST",
+                "TYPE" => "string",
                 "SETTINGS" => array(
                     "DEFAULT_VALUE" => "",
                     "SIZE" => "20",
@@ -155,6 +157,95 @@ class razout_bxrequestqueue extends CModule
                     "MAX_LENGTH" => "0",
                     "REGEXP" => "",
                 ),
+            ),
+            array(
+                "NAME" => "STATUS",
+                "TYPE" => "boolean",
+                "SETTINGS" => array(
+                    "DEFAULT_VALUE" => "",
+                    "SIZE" => "20",
+                    "ROWS" => "1",
+                    "MIN_LENGTH" => "0",
+                    "MAX_LENGTH" => "0",
+                    "REGEXP" => "",
+                ),
+            ),
+            array(
+                "NAME" => "REQUEST_NAME",
+                "TYPE" => "string",
+                "SETTINGS" => array(
+                    "DEFAULT_VALUE" => "",
+                    "SIZE" => "20",
+                    "ROWS" => "1",
+                    "MIN_LENGTH" => "0",
+                    "MAX_LENGTH" => "0",
+                    "REGEXP" => "",
+                ),
+            ),
+            array(
+                "NAME" => "CALLBACK",
+                "TYPE" => "string",
+                "SETTINGS" => array(
+                    "DEFAULT_VALUE" => "",
+                    "SIZE" => "20",
+                    "ROWS" => "1",
+                    "MIN_LENGTH" => "0",
+                    "MAX_LENGTH" => "0",
+                    "REGEXP" => "",
+                ),
+            ),
+            array(
+                "NAME" => "CALLBACK_PARAMS",
+                "TYPE" => "string",
+                "SETTINGS" => array(
+                    "DEFAULT_VALUE" => "",
+                    "SIZE" => "20",
+                    "ROWS" => "1",
+                    "MIN_LENGTH" => "0",
+                    "MAX_LENGTH" => "0",
+                    "REGEXP" => "",
+                ),
+            ),
+            array(
+                "NAME" => "RESULT",
+                "TYPE" => "string",
+                "SETTINGS" => array(
+                    "DEFAULT_VALUE" => "",
+                    "SIZE" => "20",
+                    "ROWS" => "1",
+                    "MIN_LENGTH" => "0",
+                    "MAX_LENGTH" => "0",
+                    "REGEXP" => "",
+                ),
+            ),
+            array(
+                "NAME" => "TIME",
+                "TYPE" => "datetime",
+                "SETTINGS" => array(
+                    "DEFAULT_VALUE" => "",
+                    "SIZE" => "20",
+                    "ROWS" => "1",
+                    "MIN_LENGTH" => "0",
+                    "MAX_LENGTH" => "0",
+                    "REGEXP" => "",
+                ),
+            ),
+        );
+
+        foreach ($typeArrs as $typeArr) {
+            $userTypeData = array(
+                "ENTITY_ID" => "HLBLOCK_" . $highLoadBlockId,
+                "FIELD_NAME" => "UF_" . $typeArr['NAME'],
+                "USER_TYPE_ID" => $typeArr['TYPE'],
+                "XML_ID" => "XML_ID_" . $typeArr['NAME'],
+                "SORT" => 100,
+                "MULTIPLE" => "N",
+                "MANDATORY" => "N",
+                "SHOW_FILTER" => "N",
+                "SHOW_IN_LIST" => "",
+                "EDIT_IN_LIST" => "",
+                "IS_SEARCHABLE" => "N",
+                "SETTINGS" => $typeArr['SETTINGS'],
                 "EDIT_FORM_LABEL" => array(
                     "ru" => "",
                     "en" => "",
