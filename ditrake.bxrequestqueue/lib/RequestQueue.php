@@ -1,6 +1,6 @@
 <?php
 
-namespace razout\bxrequestqueue;
+namespace ditrake\bxrequestqueue;
 
 use Bitrix\Highloadblock\HighloadBlockTable;
 use Bitrix\Main\Loader;

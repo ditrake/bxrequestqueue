@@ -7,7 +7,7 @@ use Bitrix\Main\Loader;
 
 Loc::loadMessages(__FILE__);
 
-class razout_bxrequestqueue extends CModule
+class ditrake_bxrequestqueue extends CModule
 {
     public function __construct()
     {
@@ -20,7 +20,7 @@ class razout_bxrequestqueue extends CModule
             $this->MODULE_VERSION_DATE = $arModuleVersion['VERSION_DATE'];
         }
 
-        $this->MODULE_ID = 'razout.bxrequestqueue';
+        $this->MODULE_ID = 'ditrake.bxrequestqueue';
         $this->MODULE_NAME = Loc::getMessage('BX_CONTENT_MODULE_NAME');
         $this->MODULE_DESCRIPTION = Loc::getMessage('BX_CONTENT_MODULE_DESCRIPTION');
         $this->MODULE_GROUP_RIGHTS = 'N';
@@ -54,7 +54,7 @@ class razout_bxrequestqueue extends CModule
         $nextDay = time() + 86400;
         CAgent::AddAgent(
             "RequestQueue::clearTable();",
-            "razout.bxrequestqueue",
+            "ditrake.bxrequestqueue",
             "Y",
             86400,
             "",
@@ -73,7 +73,7 @@ class razout_bxrequestqueue extends CModule
         //todo remove highload table and agent
         $this->deleteHLTable();
 
-        CAgent::RemoveModuleAgents("razout.bxrequestqueue");
+        CAgent::RemoveModuleAgents("ditrake.bxrequestqueue");
     }
 
     /**

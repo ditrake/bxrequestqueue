@@ -1,6 +1,6 @@
 <?php
 
-namespace razout\bxrequestqueue;
+namespace ditrake\bxrequestqueue;
 
 /**
  * Автозагрузчик для классов модуля.
